@@ -5,68 +5,103 @@
 struct node
 {
     int data;
-    struct node *next;
     struct node *prev;
+    struct node *next;
 };
 
 struct node *root = NULL;
 
 void append()
 {
-    struct node *temp;
-    temp = (struct node *)malloc(sizeof(struct node));
-    printf("Enter data for the node");
+    struct node *temp = (struct node *)malloc(sizeof(struct node));
+
+    printf("Enter data for the node :");
     scanf("%d", &temp->data);
     temp->next = NULL;
     temp->prev = NULL;
-
     if (root == NULL)
     {
         root = temp;
+        root->prev = temp;
+        temp->next = root;
     }
     else
     {
         struct node *p = root;
-        while (p->next != NULL)
+
+        do
         {
+
             p = p->next;
-        }
+
+        } while (p->next != root);
+
         p->next = temp;
         temp->prev = p;
+        temp->next = root;
+        root->prev = temp;
     }
+
     printf("Element was added in the end");
+}
+
+void display()
+{
+
+    struct node *p = root;
+    printf("elements of linkedlist are \n");
+    do
+    {
+        printf("%d -> ", p->data);
+        p = p->next;
+    } while (p != root);
 }
 
 void addAtBegin()
 {
     struct node *temp = (struct node *)malloc(sizeof(struct node));
-    printf("Enter data for the node");
+
+    printf("Enter data for the node :");
     scanf("%d", &temp->data);
     temp->next = NULL;
     temp->prev = NULL;
+
     if (root == NULL)
     {
         root = temp;
+        root->prev = temp;
+        temp->next = root;
     }
+
     else
     {
+        struct node *p = root;
+
+        do
+        {
+            p = p->next;
+        } while (p->next != root);
+
+        p->next = temp;
+        temp->prev = p;
         temp->next = root;
         root->prev = temp;
         root = temp;
     }
-    printf("new node was added at the begining ");
+    printf("element was added at the beginning");
 }
 
 int length()
 {
     int c = 0;
-
     struct node *p = root;
-    while (p->next != NULL)
+    do
     {
         c++;
         p = p->next;
-    }
+
+    } while (p != root);
+
     return c;
 }
 
@@ -106,45 +141,58 @@ void addAtAfter()
     }
 }
 
-void traverse()
+int delete ()
 {
-    printf("Elements of Linklist are: \n");
-    struct node *p = root;
-    while (p != NULL)
-    {
-        printf("%d -> ", p->data);
-        p = p->next;
-    }
-}
-
-void delete ()
-{
-    int loc, l, i = 1;
+    int len = length();
     struct node *temp;
-    printf("Enter location to be deleted");
+    temp = root;
+    int loc;
+    printf("Enter location");
     scanf("%d", &loc);
-    l = length();
-    if (loc > l)
+    if (loc > len)
     {
-        printf("Invalid Location");
+        printf("Invalid Location ");
+        return 0;
     }
-    else if (loc == 1)
+    if (loc == 1)
     {
-        temp = root;
-        root = temp->next;
-        temp->next->prev = NULL;
-        temp->next = NULL;
-        free(temp);
-        printf("Node was deleted");
+        if (len == 1)
+        {
+
+            temp->next = NULL;
+            temp->prev = NULL;
+            root = NULL;
+            free(temp);
+        }
+        else
+        {
+
+            struct node *p = root;
+            do
+            {
+                p = p->next;
+
+            } while (p->next != root);
+            struct node *temp = root;
+
+            p->next = temp->next;
+
+            temp->next->prev = p;
+
+            root = temp->next;
+            temp->prev = NULL;
+            temp->next = NULL;
+            free(temp);
+        }
     }
     else
     {
         struct node *p = root;
-
+        int i = 1;
         while (i < loc - 1)
         {
-            p = p->next;
             i++;
+            p = p->next;
         }
         struct node *temp;
         temp = p->next;
@@ -154,7 +202,6 @@ void delete ()
         temp->prev = NULL;
         free(temp);
     }
-    printf("Node was deleted");
 }
 
 int main()
@@ -162,7 +209,7 @@ int main()
     int ch = 0;
     while (ch != 6)
     {
-        printf("\n.................Singly LinkList Implementation................. \n");
+        printf("\n.................Circular Doubly Implementation................. \n");
         printf("1 to append \n");
         printf("2 to AddAtBegin element \n");
         printf("3 to AddAtAfter element \n");
@@ -197,7 +244,7 @@ int main()
         case 5:
         {
 
-            traverse();
+            display();
             break;
         }
 
@@ -213,5 +260,7 @@ int main()
             break;
         }
         }
+        getch();
+        system("cls");
     }
 }
